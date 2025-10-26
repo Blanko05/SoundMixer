@@ -33,37 +33,19 @@ def download_audio(video_id, output_path='downloads'):
             'preferredquality': '192',
         }],
         'outtmpl': os.path.join(output_path, '%(id)s.%(ext)s'),
-        'quiet': True,
-        # Add these options to avoid bot detection
+        'quiet': False,  # Set to False to see more info
+        'cookiefile': 'cookies.txt',  # Directly use the cookies file
         'http_headers': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language': 'en-us,en;q=0.5',
-            'Accept-Encoding': 'gzip,deflate',
-            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-            'Connection': 'keep-alive',
         },
-        # Add extractor arguments
-        'extractor_args': {
-            'youtube': {
-                'player_client': ['android', 'web'],
-            }
-        },
-        # Retry settings
-        'retries': 10,
-        'fragment_retries': 10,
-        'skip_unavailable_fragments': True,
     }
-    
-    # Try to use cookies if available
-    cookies_file = os.getenv('COOKIES_FILE_PATH', 'cookies.txt')
-    if os.path.exists(cookies_file):
-        ydl_opts['cookiefile'] = cookies_file
-        print("Using cookies for authentication")
     
     url = f'https://youtube.com/watch?v={video_id}'
     
     try:
+        print("Downloading with cookies authentication...")
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
         
@@ -71,8 +53,8 @@ def download_audio(video_id, output_path='downloads'):
     
     except Exception as e:
         print(f"Download error: {e}")
-        # Fallback: try without post-processing
-        return download_audio_fallback(video_id, output_path)
+        return None
+
 
 def download_audio_fallback(video_id, output_path='downloads'):
     """Fallback download method without post-processing"""
