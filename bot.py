@@ -285,8 +285,13 @@ async def process_natural_language(update: Update, text: str):
         await msg.edit_text("🎛️ Mixing...")
         output = mix_stereo(file1, file2, f"mix_{update.message.from_user.id}.mp3")
         
+        if not output or not os.path.exists(output):
+            await msg.edit_text("❌ Mixing failed")
+            return
+        
         await msg.edit_text("✅ Done!")
-        await update.message.reply_document(document=open(output, 'rb'), filename="mix.mp3")
+        with open(output, 'rb') as f:
+            await update.message.reply_document(document=f, filename="mix.mp3")
         
         os.remove(file1)
         os.remove(file2)
