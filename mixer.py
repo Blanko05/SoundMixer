@@ -2,7 +2,7 @@
 from pedalboard.io import AudioFile
 import numpy as np
 
-def mix_stereo(left_path, right_path, output_path="mixed.wav"):
+def mix_stereo(left_path, right_path, output_path="mixed.mp3"):
     """Mix two audio files into stereo"""
     
     with AudioFile(left_path) as f:
@@ -26,8 +26,7 @@ def mix_stereo(left_path, right_path, output_path="mixed.wav"):
     # Stereo
     stereo = np.vstack([left, right])
     
-    output_mp3 = output_path.replace('.wav', '.mp3')
-    with AudioFile(output_mp3, 'w', sr, num_channels=2) as f:
+    with AudioFile(output_path, 'w', sr, num_channels=2) as f:
         f.write(stereo)
     
     return output_path
